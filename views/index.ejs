@@ -1,0 +1,56 @@
+ <%- include('partials/header.ejs'); -%>    <!-- special EJS syntax, inserts another EJS file to the current EJS file. -->  <!--  -->
+
+  <div class="box" id="heading"> <!-- the div element for the heading title as today --> 
+    <h1>
+      <%= listTitle %> <!-- listTitle is a EJS variable which is rendered to this ejs file from the javascript file. -->
+    </h1>
+  </div>
+
+  <div class="box"> <!-- the main div element, all the action is here -->
+    <!-- For loop for repetition of creating an div element for each item -->
+    <% for(let item of listItems){%>  <!-- listItems gets passed into this loop, and we loop through each of the items in the list items and use it to create one of these html rows for items. -->
+
+      <div class="item">
+        
+
+        
+
+        <form class="edit" action="/edit" method="post"> <!-- this form element is shown on the page when the trigger function is called from handler function by pressing the pencil button  -->
+          <input type="hidden" name="updatedItemId" value="<%= item.id %>"> <!-- this is a hidden input element, triggered by the handler function -->
+          <input id="input<%=item.id%>" type="text" name="updatedItemTitle" value="<%= item.title %>" autocomplete="off"
+            autofocus="true" hidden="true" /> <!-- this input element at first shows the current value where it takes it from an item.title and updates the value after editing when the related button is clicked  -->
+          <button id="done<%=item.id%>" class="edit" type="submit" hidden><img class="icon" 
+              src="/assets/icons/done.png" alt="tick image"></button> <!-- this button element completes the edit action -->
+        </form>
+        <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')"><img class="icon" 
+            src="/assets/icons/edit.png" alt="pencil image"></button> <!-- this button element is reflected by a pencil symbol on the webpage, on click runs the handler function -->
+
+        <p id="title<%=item.id%>">  <!-- this p element has a special id attribute that is created by EJS variable which takes the id value from an item  -->
+              <%= item.title %> <!-- inside the html p element, it shows the EJS variable that takes the title value from an item -->
+        </p>
+
+        <form action="/delete" method="post" class="deletebutton">  <!-- form element, the action attribute of the form element sends the form-data to the /delete file by the post method -->
+              <button type="input" class="delete" onclick="this.form.submit()" name="deleteItemId" value="<%= item.id %>"><img class="icon" 
+                src="/assets/icons/delete.png" alt="trashbin image"></button>  <!--  input type of the form element is checkbox, and onchange executes the action /delete from server by submitting the post request-->
+        </form>
+      </div>
+
+      <% } %>
+
+        <form class="item" action="/add" method="post">  <!-- this form element creates a new item by /add action, by post method -->
+          <input type="text" name="newItem" placeholder="New Item" autocomplete="off" autofocus="true" /> <!-- this input element creates a new input text field, name value is newItem and placeholder shown as in the webpage -->
+          <button class="add" type="submit" name="list" value=<%=listTitle %> >+</button> <!-- this is the plus button that adds the value as listTitle which is today  -->
+        </form>
+
+  </div>
+
+  <script>
+    function handler(id) { //handler function is triggered when the edit button "pencil" is clicked. And, it runs below codes and manipulates the above html elements attributes of the above elements. 
+      document.getElementById("title" + id).setAttribute("hidden", true) //the p element's attribute; hidden is set as true, so the p element disappear.
+      document.getElementById("edit" + id).setAttribute("hidden", true) //the pencil button disappears by setting the attribute as hidden like above. 
+      document.getElementById("done" + id).removeAttribute("hidden") //the tick button appears as its hidden attribute is removed.
+      document.getElementById("input" + id).removeAttribute("hidden") // the html element, input text box appears, by removing its hidden attribute.
+    }
+  </script>
+
+  <%- include('partials/footer.ejs'); -%>  <!-- special EJS syntax, inserts another EJS file to the current EJS file. -->
